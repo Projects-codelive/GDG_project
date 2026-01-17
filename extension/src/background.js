@@ -44,7 +44,7 @@ async function savePostToApi(data) {
         const { token } = await chrome.storage.local.get('token');
         if (!token) return { success: false, message: 'Please login first' };
 
-        const res = await fetch('http://localhost:5000/api/posts', {
+        const res = await fetch('https://gdg-project-yexd.onrender.com/api/posts', {
             method: 'POST',
             headers: {
                 'Authorization': `Bearer ${token}`,
