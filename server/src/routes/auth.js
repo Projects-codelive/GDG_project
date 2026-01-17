@@ -10,7 +10,7 @@ const {
 } = require('@simplewebauthn/server');
 
 const rpID = process.env.RP_ID || 'localhost';
-const origin = process.env.ORIGIN || 'http://localhost:5173';
+const origin = (process.env.ORIGIN || 'http://localhost:5173').replace(/\/$/, '');
 
 // --- Registration ---
 
