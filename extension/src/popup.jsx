@@ -34,7 +34,7 @@ const PopupApp = () => {
     };
 
     const openDashboard = () => {
-        chrome.tabs.create({ url: 'http://localhost:5173/dashboard.html' });
+        chrome.tabs.create({ url: 'https://gdg-project-7bne.vercel.app/dashboard.html' });
     }
 
     return (
@@ -58,8 +58,8 @@ const PopupApp = () => {
             <div className="p-6">
                 {/* Status Badge */}
                 <div className={`inline-flex items-center gap-2 px-4 py-2 rounded-xl mb-6 ${storedToken
-                        ? 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400'
-                        : 'bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400'
+                    ? 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400'
+                    : 'bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400'
                     }`}>
                     <div className={`w-2 h-2 rounded-full ${storedToken ? 'bg-green-500' : 'bg-amber-500'} animate-pulse`}></div>
                     <span className="text-sm font-medium">{status}</span>
