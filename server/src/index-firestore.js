@@ -6,7 +6,7 @@ const cors = require("cors");
 require("./config/firebase");
 
 const app = express();
-const PORT = process.env.PORT || 5001; // Use 5001 to avoid macOS AirPlay conflict on 5000
+const PORT = process.env.PORT || 5000;
 
 // Middleware
 app.use(cors());
