@@ -5,7 +5,7 @@ const postSchema = new mongoose.Schema({
     directory: { type: mongoose.Schema.Types.ObjectId, ref: 'Directory', required: false }, // Can be in 'Uncategorized' (null)
 
     originalUrl: { type: String, required: true },
-    platform: { type: String, enum: ['linkedin', 'twitter', 'instagram', 'other'], default: 'other' },
+    platform: { type: String, enum: ['linkedin', 'twitter', 'instagram', 'youtube', 'other'], default: 'other' },
 
     content: { type: String },
     authorName: { type: String },
