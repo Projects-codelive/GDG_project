@@ -119,7 +119,7 @@ router.post('/login/options', async (req, res) => {
         const validCredentials = user.authenticators
             .filter(auth => auth.credentialID && auth.credentialID.length > 0)
             .map(auth => ({
-                id: Buffer.from(auth.credentialID, 'base64'),
+                id: auth.credentialID.replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, ''),
                 type: 'public-key',
                 transports: auth.transports || [],
             }));
@@ -152,10 +152,10 @@ router.post('/login/verify', async (req, res) => {
     }
 
     // Find the authenticator used
-    const authenticator = user.authenticators.find(auth =>
-        auth.credentialID === response.id // response.id is base64url usually, but simplewebauthn handles it? 
-        // actually check if response.id matches our stored base64
-    );
+    const authenticator = user.authenticators.find(auth => {
+        const currentBase64URL = auth.credentialID.replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '');
+        return currentBase64URL === response.id;
+    });
 
     // Note: response.id comes from client as base64url usually.
     // We stored as base64. Let's rely on the library verification first.
@@ -173,9 +173,8 @@ router.post('/login/verify', async (req, res) => {
     // For safety, let's try to match loosely or convert.
 
     const foundAuth = user.authenticators.find(auth => {
-        // Basic conversion check could go here if needed
-        // For now assuming the library and client use consistent encoding (usually base64url in new webauthn)
-        return auth.credentialID === bodyCredID;
+        const currentBase64URL = auth.credentialID.replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '');
+        return currentBase64URL === bodyCredID;
     });
 
     if (!foundAuth) {
