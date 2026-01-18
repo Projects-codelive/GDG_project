@@ -12,7 +12,7 @@ app.use(express.json());
 
 // Basic Route
 app.get('/', (req, res) => {
-    res.send('Linko Server is Running');
+    res.send('Linka Server is Running');
 });
 
 // Database Connection

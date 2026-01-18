@@ -48,7 +48,7 @@ const PopupApp = () => {
                         </svg>
                     </div>
                     <div>
-                        <h1 className="text-xl font-bold">Linko</h1>
+                        <h1 className="text-xl font-bold">Linka</h1>
                         <p className="text-xs text-white/70">Social Media Saver</p>
                     </div>
                 </div>

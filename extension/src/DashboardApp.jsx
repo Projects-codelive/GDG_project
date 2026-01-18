@@ -13,7 +13,7 @@ export default function DashboardApp() {
             <div className="flex h-screen items-center justify-center bg-slate-50 dark:bg-slate-950">
                 <div className="text-center">
                     <div className="inline-block h-12 w-12 animate-spin rounded-full border-4 border-solid border-apricot border-r-transparent mb-4"></div>
-                    <p className="text-slate-600 dark:text-slate-400 font-medium">Loading Linko...</p>
+                    <p className="text-slate-600 dark:text-slate-400 font-medium">Loading Linka...</p>
                 </div>
             </div>
         );
@@ -42,7 +42,7 @@ export default function DashboardApp() {
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
                             </svg>
                         </div>
-                        <h1 className="text-lg font-bold text-white tracking-tight">Linko</h1>
+                        <h1 className="text-lg font-bold text-white tracking-tight">Linka</h1>
                     </div>
                     <div className="flex items-center gap-2">
                         <button

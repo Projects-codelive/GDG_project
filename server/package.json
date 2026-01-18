@@ -1,7 +1,7 @@
 {
-  "name": "linko-server",
+  "name": "linka-server",
   "version": "1.0.0",
-  "description": "Backend for Linko Extension",
+  "description": "Backend for Linka Extension",
   "main": "src/index.js",
   "scripts": {
     "start": "node src/index.js",
