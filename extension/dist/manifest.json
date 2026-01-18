@@ -10,6 +10,10 @@
         "scripting",
         "notifications"
     ],
+    "host_permissions": [
+        "http://localhost:5001/*",
+        "https://gdg-project-yexd.onrender.com/*"
+    ],
     "action": {
         "default_popup": "popup.html",
         "default_icon": {

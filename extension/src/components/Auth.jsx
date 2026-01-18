@@ -2,10 +2,11 @@ import React, { useState } from 'react';
 import { startRegistration, startAuthentication } from '@simplewebauthn/browser';
 import { useAuth } from '../context/AuthContext';
 
-const API_BASE = 'https://gdg-project-yexd.onrender.com/api';
+const API_BASE = 'http://localhost:5001/api';
 
 export default function Auth() {
     const [username, setUsername] = useState('');
+    const [password, setPassword] = useState(''); // New state
     const [error, setError] = useState('');
     const { login } = useAuth();
     const [loading, setLoading] = useState(false);
@@ -14,6 +15,23 @@ export default function Auth() {
         setLoading(true);
         setError('');
         try {
+            // Password Registration
+            if (password) {
+                const resp = await fetch(`${API_BASE}/auth/register/password`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username, password })
+                });
+                const data = await resp.json();
+                if (resp.ok) {
+                    login(data.token, data.username);
+                } else {
+                    setError(data.error || 'Registration failed');
+                }
+                return;
+            }
+
+            // Passkey Registration
             const resp = await fetch(`${API_BASE}/auth/register/options`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -51,6 +69,23 @@ export default function Auth() {
         setLoading(true);
         setError('');
         try {
+            // Password Login
+            if (password) {
+                const resp = await fetch(`${API_BASE}/auth/login/password`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username, password })
+                });
+                const data = await resp.json();
+                if (resp.ok) {
+                    login(data.token, data.username);
+                } else {
+                    setError(data.error || 'Login failed');
+                }
+                return;
+            }
+
+            // Passkey Login
             const resp = await fetch(`${API_BASE}/auth/login/options`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -102,7 +137,7 @@ export default function Auth() {
 
                 {/* Form Content */}
                 <div className="p-8">
-                    <div className="mb-6">
+                    <div className="mb-4">
                         <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
                             Username
                         </label>
@@ -112,6 +147,23 @@ export default function Auth() {
                             className="w-full px-4 py-3 border border-slate-300 dark:border-slate-700 rounded-xl bg-slate-50 dark:bg-slate-800 focus:ring-2 focus:ring-apricot focus:border-transparent outline-none transition-all text-slate-900 dark:text-white placeholder-slate-400"
                             value={username}
                             onChange={e => setUsername(e.target.value)}
+                            onKeyPress={e => e.key === 'Enter' && username.trim() && handleLogin()}
+                        />
+                    </div>
+
+                    <div className="mb-6">
+                        <div className="flex justify-between mb-2">
+                            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300">
+                                Password
+                            </label>
+                            <span className="text-xs text-slate-400">(Optional for Passkeys)</span>
+                        </div>
+                        <input
+                            type="password"
+                            placeholder="Enter password (optional)"
+                            className="w-full px-4 py-3 border border-slate-300 dark:border-slate-700 rounded-xl bg-slate-50 dark:bg-slate-800 focus:ring-2 focus:ring-apricot focus:border-transparent outline-none transition-all text-slate-900 dark:text-white placeholder-slate-400"
+                            value={password}
+                            onChange={e => setPassword(e.target.value)}
                             onKeyPress={e => e.key === 'Enter' && username.trim() && handleLogin()}
                         />
                     </div>
@@ -140,10 +192,16 @@ export default function Auth() {
                                 </>
                             ) : (
                                 <>
-                                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z" />
-                                    </svg>
-                                    <span>Login with Passkey</span>
+                                    {password ? (
+                                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" />
+                                        </svg>
+                                    ) : (
+                                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z" />
+                                        </svg>
+                                    )}
+                                    <span>{password ? 'Login with Password' : 'Login with Passkey'}</span>
                                 </>
                             )}
                         </button>
@@ -156,7 +214,7 @@ export default function Auth() {
                             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
                             </svg>
-                            <span>Create Account</span>
+                            <span>{password ? 'Create Account with Password' : 'Create Account with Passkey'}</span>
                         </button>
                     </div>
 

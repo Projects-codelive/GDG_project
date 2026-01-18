@@ -65,7 +65,7 @@ router.post('/register/verify', async (req, res) => {
         verification = await verifyRegistrationResponse({
             response,
             expectedChallenge: user.currentChallenge,
-            expectedOrigin: origin,
+            expectedOrigin: req.headers.origin || origin, // Allow dynamic origin for extension
             expectedRPID: rpID,
             requireUserVerification: false, // Fix "User verification required" error
         });
@@ -212,6 +212,58 @@ router.post('/login/verify', async (req, res) => {
         res.json({ verified: true, token });
     } else {
         res.status(400).json({ verified: false });
+    }
+});
+
+// --- Password Auth ---
+const bcrypt = require('bcryptjs');
+
+router.post('/register/password', async (req, res) => {
+    const { username, password } = req.body;
+    if (!username || !password) {
+        return res.status(400).json({ error: 'Username and password required' });
+    }
+
+    try {
+        let user = await User.findOne({ username });
+        if (user) {
+            return res.status(400).json({ error: 'Username already taken' });
+        }
+
+        const hashedPassword = await bcrypt.hash(password, 10);
+        user = new User({ username, password: hashedPassword });
+        await user.save();
+
+        const token = jwt.sign({ userId: user._id, username: user.username }, process.env.JWT_SECRET, { expiresIn: '7d' });
+        res.json({ token, username });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Registration failed' });
+    }
+});
+
+router.post('/login/password', async (req, res) => {
+    const { username, password } = req.body;
+    if (!username || !password) {
+        return res.status(400).json({ error: 'Username and password required' });
+    }
+
+    try {
+        const user = await User.findOne({ username }).select('+password');
+        if (!user || !user.password) {
+            return res.status(401).json({ error: 'Invalid credentials' });
+        }
+
+        const isMatch = await bcrypt.compare(password, user.password);
+        if (!isMatch) {
+            return res.status(401).json({ error: 'Invalid credentials' });
+        }
+
+        const token = jwt.sign({ userId: user._id, username: user.username }, process.env.JWT_SECRET, { expiresIn: '7d' });
+        res.json({ token, username });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Login failed' });
     }
 });
 

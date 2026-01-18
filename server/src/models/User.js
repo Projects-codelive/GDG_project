@@ -2,7 +2,8 @@ const mongoose = require('mongoose');
 
 const userSchema = new mongoose.Schema({
     username: { type: String, required: true, unique: true },
-    email: { type: String, required: false, unique: true, sparse: true }, // Optional if just using passkeys? Let's keep it.
+    email: { type: String, required: false, unique: true, sparse: true }, 
+    password: { type: String, select: false }, // Hashed password, select: false security
 
     // Passkey Authenticators
     authenticators: [{
